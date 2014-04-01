@@ -1,0 +1,34 @@
+{
+  "name": "logotome",
+  "version": "0.0.1",
+  "description": "Democratically controlled projects.",
+  "author": "Maurits van Mastrigt",
+  "homepage": "https://github.com/mauvm/logotome",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mauvm/logotome"
+  },
+  "bugs": {
+    "url": "https://github.com/mauvm/logotome/issues"
+  },
+  "main": "app.js",
+  "scripts": {
+    "start": "npm install && node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lgtm",
+    "democratic",
+    "model",
+    "server",
+    "repository"
+  ],
+  "dependencies": {
+    "async": "~0.6.2",
+    "github": "~0.1.15",
+    "prompt": "~0.2.12",
+    "optimist": "~0.6.1",
+    "cli-color": "~0.2.3"
+  }
+}

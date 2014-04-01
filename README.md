@@ -61,17 +61,16 @@ This will be the workflow of Logotome:
 
 ### To Do
 
-1. Determine programming language;
-2. Collaborators can also provide part of this functionality
+1. Collaborators can also provide part of this functionality
 (test if a new collaborator can edit the collaborators);
-3. Handle requirements:
+2. Handle requirements:
 
-	- Webhook (especially request authentication)
-	- Github API access
+		- Webhook (especially request authentication)
+		- Github API access
 
-4. Develop MWE;
-5. Apply Logotome to this repository;
-6. Find contributers (post on HN?).
+3. Develop MWE;
+4. Apply Logotome to this repository;
+5. Find contributers (post on HN?).
 
 
 
