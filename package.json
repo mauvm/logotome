@@ -1,6 +1,6 @@
 {
   "name": "logotome",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Democratically controlled projects.",
   "author": "Maurits van Mastrigt",
   "homepage": "https://github.com/mauvm/logotome",
@@ -12,9 +12,8 @@
   "bugs": {
     "url": "https://github.com/mauvm/logotome/issues"
   },
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "npm install && node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -22,13 +21,21 @@
     "democratic",
     "model",
     "server",
-    "repository"
+    "repository",
+    "merge",
+    "pull request"
   ],
   "dependencies": {
-    "async": "~0.6.2",
-    "github": "~0.1.15",
-    "prompt": "~0.2.12",
-    "optimist": "~0.6.1",
-    "cli-color": "~0.2.3"
+    "async": "^1.4.2",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.5",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "github": "^0.2.4",
+    "passport": "^0.3.0",
+    "passport-github": "^1.0.0",
+    "session-file-store": "0.0.19",
+    "underscore": "^1.8.3"
   }
 }

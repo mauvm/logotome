@@ -1,0 +1,12 @@
+<% if (!user) { %>
+	<h2>Welcome! Please log in.</h2>
+<% } else { %>
+	<h2>Hello, <%= user.displayName %>.</h2>
+	<% _.each(pullRequests, function (pr) { %>
+		<hr/>
+		<h3><%= pr.title  %> (<%= pr.head.ref %><%= pr.shouldMerge ? ', SHOULD BE MERGED' : '' %>)</h3>
+		<% _.each(pr.comments, function (comment) { %>
+			<div><%= comment.user.login %>: <%= comment.body %></div>
+		<% }) %>
+	<% }) %>
+<% } %>
