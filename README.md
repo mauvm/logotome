@@ -2,13 +2,15 @@
 
 Say you have a great idea for a new project and you are willing to open-source the project with people who know what the're talking about.
 
-The idea of Logotome is to provide a democratically controlled Github project by specifying owners.
+The idea of Logotome is to provide a democratically controlled Github project by specifying voters.
+
+![LGTM](http://i.imgur.com/sAeFnJk.png)
 
 
 
 ### Concept
 
-The Ownerfile in the root directory specifies the GitHub users that can vote on PRs. If the majority of them votes (by commenting "LGTM" or ":+1:+ on the PR), the PR will be merged automatically.
+The `VOTERS` file in the root directory specifies the GitHub users that can vote on PRs. If the majority of them votes (by commenting "LGTM" or ":+1:" on the PR), the PR will be merged automatically.
 
 As a proof-of-concept, this repository will be democratically controlled by Logotome.
 
@@ -19,11 +21,11 @@ As a proof-of-concept, this repository will be democratically controlled by Logo
 This will be the workflow of Logotome:
 
 1. When someone comments on a PR, the webhook is triggered, which contacts the Logotome server;
-2. The `VOTERS` file is fetched and the owners are determined;
+2. The `VOTERS` file is fetched and the voters are determined;
 3. Next the pull requests and their comments are fetched;
 4. Non-voter comments on the PR will be filtered out;
 5. The comments will be checked for "LGTM" or ":+1:"
-6. If the majority (50% or more) of the voters thinks it looks good, the PR will be merged automatically.
+6. If the majority of the voters thinks it looks good, the PR will be merged automatically.
 
 
 
