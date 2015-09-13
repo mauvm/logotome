@@ -13,7 +13,7 @@ var GitHubStrategy = require('passport-github').Strategy
 var GitHubApi = require('github')
 var config = require('./config.json')
 
-var debug = false
+var debug = true
 var host = 'http://127.0.0.1'
 var port = 9003
 
@@ -94,30 +94,6 @@ app.get('/', function (req, res) {
 	})
 })
 
-function verifyIfShouldBeMerged (pr, username, cb) {
-	github.repos.getContent({
-		user: username,
-		repo: 'logotome-test',
-		path: 'VOTERS',
-	}, function (err, file) {
-		if (err) return cb(err)
-		if (file.encoding !== 'base64') return cb('Cannot handle file encoding: ' + file.encoding)
-
-		var voters = _.chain(new Buffer(file.content, file.encoding).toString('utf8').split('\n')).map(function (user) { return user.trim() }).filter().uniq().value()
-
-		var users = _.chain(pr.comments).map(function (comment) {
-			if (comment.body.match(/^LGTM/i) || comment.body.match(/^:\+1:/)) {
-				return comment.user.login
-			}
-		}).filter().uniq().intersection(voters).value()
-
-		var shouldMerge = (users.length / voters.length) >= 0.5
-
-		pr.shouldMerge = shouldMerge
-		cb()
-	})
-}
-
 app.get(
 	'/account',
 	function (req, res, next) {
@@ -151,6 +127,91 @@ app.get('/logout', function (req, res) {
 	req.logout()
 	res.redirect('/')
 })
+
+app.get(
+	'/hook',
+	function (req, res, next) {
+		if (req.isAuthenticated()) return next()
+		res.redirect('/login')
+	},
+	function (req, res) {
+		github.pullRequests.getAll({
+			user: req.user.username,
+			repo: 'logotome-test',
+		}, function (err, pullRequests) {
+			if (err) console.error(err)
+
+			console.log(pullRequests)
+			pullRequests = _.filter(pullRequests, function (pr) {
+				return pr.state === 'open' && pr.locked === false
+			})
+
+			async.eachSeries(pullRequests, function (pr, cb) {
+				github.issues.getComments({
+					user: req.user.username,
+					repo: 'logotome-test',
+					number: pr.number,
+				}, function (err, comments) {
+					if (err) return cb(err)
+					pr.comments = comments
+					verifyIfShouldBeMerged(pr, req.user.username, cb)
+				})
+			}, function (err) {
+				async.eachSeries(pullRequests, function (pr, cb) {
+					if ( ! pr.shouldMerge) return cb()
+
+					console.log('merge', pr)
+
+					github.pullRequests.merge({
+						user: req.user.username,
+						repo: 'logotome-test',
+						number: pr.number,
+						commit_message: 'Automatically merged by Logotome.',
+						sha: pr.head.sha,
+					}, function (err, data) {
+						if (err) return cb(err.message)
+						if ( ! data.merged) return cb(data.message)
+						cb()
+					})
+				}, function (err) {
+					if (err) {
+						if (_.isObject(err) && err.message) {
+							err = err.message
+						}
+						res.status(500).send(err)
+					} else {
+						res.send()
+					}
+				})
+			})
+		})
+	}
+)
+
+function verifyIfShouldBeMerged (pr, username, cb) {
+	github.repos.getContent({
+		user: username,
+		repo: 'logotome-test',
+		path: 'VOTERS',
+	}, function (err, file) {
+		if (err) return cb(err)
+		if (file.encoding !== 'base64') return cb('Cannot handle file encoding: ' + file.encoding)
+
+
+		var voters = _.chain(new Buffer(file.content, file.encoding).toString('utf8').split('\n')).map(function (user) { return user.trim() }).filter().uniq().value()
+
+		var users = _.chain(pr.comments).map(function (comment) {
+			if (comment.body.match(/^LGTM/i) || comment.body.match(/^:\+1:/)) {
+				return comment.user.login
+			}
+		}).filter().uniq().intersection(voters).value()
+
+		var shouldMerge = (users.length / voters.length) >= 0.5
+
+		pr.shouldMerge = shouldMerge
+		cb()
+	})
+}
 
 app.listen(port)
 console.log('Listening on port', port)
